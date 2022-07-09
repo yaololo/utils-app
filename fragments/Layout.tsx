@@ -34,4 +34,5 @@ const Layout: React.FC<LayoutProps> = ({ children, title }) => (
     {children}
   </div>
 );
+
 export default Layout;
