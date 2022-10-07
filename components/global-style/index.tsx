@@ -1,26 +1,33 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
+  :root {
+    --brown: #8d8741;
+    --btn-primary: #659dbd;
+    --btn-secondary: #daad86;
+    --bg-primary: #fcfcfc;
+    --bg-secondary: #bc986a;
+    --yellowish: #fbeec1;
+
+    --content-width: 1024px;
+  }
+
   html {
     box-sizing: border-box;
+    scroll-behavior: smooth;
   }
 
   :before, *:after {
     box-sizing: inherit;
   }
 
-  * {
-    scroll-behavior: smooth;
+  body {
     margin: 0;
     padding: 0;
-  }
-
-
-
-  #root {
     width: 100vw;
     height: 100vh;
     overflow: auto;
+    background-color: var(--bg-primary);
     input:-webkit-autofill,
     input:-webkit-autofill:hover,
     input:-webkit-autofill:focus,
@@ -28,6 +35,24 @@ const GlobalStyle = createGlobalStyle`
         -webkit-box-shadow: 0 0 0 30px white inset !important;
     }
   }
-`;
 
-export default GlobalStyle;
+  .flex { display: flex; }
+  .justify-center { justify-content: center; }
+  .justify-left { justify-content: left; }
+  .justify-right { justify-content: right; }
+  .justify-space-between { justify-content: space-between; }
+  .justify-space-even { justify-content: space-even; }
+  .align-center { align-items: center; }
+  .align-left { align-items: left; }
+  .align-right { align-items: right; }
+  .flex-direction-col { flex-direction: column; }
+  .flex-direction-row-reverse { flex-direction: row-reverse; }
+  .flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+`
+
+export default GlobalStyle
