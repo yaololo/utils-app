@@ -1,11 +1,13 @@
-import React from "react";
-import Layout from "@/fragments/Layout";
+import React from 'react'
+import Home from 'pages/home'
+import Header from '@/fragments/header'
 
 const Index: React.FunctionComponent = () => {
   return (
-    <Layout title="Home">
-      <h1>Hello Next.js 👋</h1>
-    </Layout>
-  );
-};
-export default Index;
+    <>
+      <Header />
+      <Home />
+    </>
+  )
+}
+export default Index
