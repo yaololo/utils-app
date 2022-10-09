@@ -1,15 +1,11 @@
 import { createGlobalStyle } from 'styled-components'
 
+import { btnPrimary } from './button'
+import { themeVariable } from './variables'
+
 const GlobalStyle = createGlobalStyle`
   :root {
-    --brown: #8d8741;
-    --btn-primary: #659dbd;
-    --btn-secondary: #daad86;
-    --bg-primary: #fcfcfc;
-    --bg-secondary: #bc986a;
-    --yellowish: #fbeec1;
-
-    --content-width: 1024px;
+    ${themeVariable}
   }
 
   html {
@@ -51,6 +47,10 @@ const GlobalStyle = createGlobalStyle`
     display: flex;
     justify-content: center;
     align-items: center;
+  }
+
+  .btn-primary{
+    ${btnPrimary}
   }
 
 `
