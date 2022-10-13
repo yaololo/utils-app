@@ -1,0 +1,6 @@
+export const DATA_STATE = {
+  FAIL: 'FAIL',
+  SUCCESS: 'SUCCESS',
+  UN_SET: 'UN_SET',
+  LOADING: 'LOADING',
+}
