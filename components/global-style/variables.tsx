@@ -21,4 +21,6 @@ export const themeVariable = css`
   --divider: rgba(0, 0, 0, 0.06);
 
   --content-width: 1024px;
+
+  --border-color: rgb(218, 220, 224);
 `
