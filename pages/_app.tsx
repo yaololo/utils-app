@@ -1,11 +1,9 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useEffect } from 'react'
 import { ThemeProvider } from 'styled-components'
 import theme from '@/lib/utils/theme'
 import GlobalStyle from '@/components/global-style'
-import { useRouter } from 'next/router'
-import setLanguage from 'next-translate/setLanguage'
-import message from '@/components/message'
-import useNotification from '@/components/message/use-notification'
+// import { useRouter } from 'next/router'
+// import setLanguage from 'next-translate/setLanguage'
 
 type MyAppProps = {
   Component: React.FC
@@ -14,8 +12,7 @@ type MyAppProps = {
 
 const MyApp = (props: MyAppProps) => {
   const { Component, pageProps } = props
-  const { locale } = useRouter()
-  const [, holder] = useNotification()
+  // const { locale } = useRouter()
 
   // const changeLocale = useCallback(async (local: string) => {
   //   await setLanguage(local)
@@ -32,7 +29,6 @@ const MyApp = (props: MyAppProps) => {
       <ThemeProvider theme={theme}>
         <GlobalStyle />
         <Component {...pageProps} />
-        {holder}
       </ThemeProvider>
     </>
   )

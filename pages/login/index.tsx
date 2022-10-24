@@ -71,32 +71,7 @@ export default Login
 export const getStaticProps: GetStaticProps<{
   loginUrl: string
 }> = async () => {
-  // let userProfile: UserProfileFE = {
-  //   accountId: '',
-  //   name: {
-  //     givenName: '',
-  //     surname: '',
-  //     familiarName: '',
-  //     displayName: '',
-  //     abbreviatedName: '',
-  //   },
-  //   email: '',
-  //   country: '',
-  //   locale: '',
-  // }
   const loginUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${process.env.CLIENT_ID}&response_type=code&redirect_uri=${process.env.REDIRECT_URI}`
-
-  // if (!code) {
-  //   return {
-  //     props: { userProfile, loginUrl },
-  //   }
-  // }
-
-  // console.log('code', code)
-
-  // const result = await loginWithCode(res, String(code))
-
-  // console.log(result)
 
   return {
     props: { loginUrl },

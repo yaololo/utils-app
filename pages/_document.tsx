@@ -1,9 +1,18 @@
 // @ts-ignore
-import Document, { Head, Main, NextScript, Html } from 'next/document'
+import Document, {
+  Head,
+  Main,
+  NextScript,
+  Html,
+  DocumentContext,
+  DocumentInitialProps,
+} from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
 
 export default class MyDocument extends Document {
-  static async getInitialProps(ctx) {
+  static async getInitialProps(
+    ctx: DocumentContext
+  ): Promise<DocumentInitialProps> {
     const sheet = new ServerStyleSheet()
     const originalRenderPage = ctx.renderPage
 
@@ -15,20 +24,23 @@ export default class MyDocument extends Document {
 
     // Run the parent `getInitialProps`, it now includes the custom `renderPage`
     const initialProps = await Document.getInitialProps(ctx)
-
     const styleTags = sheet.getStyleElement()
-
+    // @ts-ignore
     return { ...initialProps, styleTags }
   }
 
   render() {
     return (
       <Html>
-        <Head>{this.props.styleTags}</Head>
+        <Head>
+          {
+            // @ts-ignore
+            this.props.styleTags
+          }
+        </Head>
         <body>
           <Main />
           <NextScript />
-          <div id="notification"></div>
         </body>
       </Html>
     )
