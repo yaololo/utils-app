@@ -1,10 +1,9 @@
 import React from 'react'
 import Link from 'next/link'
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
+import { GetStaticProps, InferGetServerSidePropsType } from 'next'
 
 import Divider from '@/components/divider'
 import styled from 'styled-components'
-import { UserProfileFE } from '@/interfaces/user'
 
 const Header = styled.header`
   height: 48px;
@@ -45,61 +44,61 @@ const LoginContainer = styled.div`
 `
 
 const Login = ({
-  token,
-  error,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  loginUrl,
+}: InferGetServerSidePropsType<typeof getStaticProps>) => {
   return (
     <>
       <Header></Header>
       <Divider />
-      {error && <div>{error.message}</div>}
-      {token ? (
-        <>welcome to the website</>
-      ) : (
-        <LoginForm>
-          <Link href="https://www.dropbox.com/oauth2/authorize?client_id=q4tzjs9a67zqir6&response_type=code&redirect_uri=http://localhost:3000/api/auth/get-code-callback">
-            <a>
-              <LoginContainer className="flex align-center">
-                <span className="flex justify-center align-center">
-                  <img src="/svg/dropbox.svg" alt="dropbox logo" />
-                </span>
-                <p>Login with Dropbox</p>
-              </LoginContainer>
-            </a>
-          </Link>
-        </LoginForm>
-      )}
+      <LoginForm>
+        <Link href={loginUrl}>
+          <a>
+            <LoginContainer className="flex align-center">
+              <span className="flex justify-center align-center">
+                <img src="/svg/dropbox.svg" alt="dropbox logo" />
+              </span>
+              <p>Login with Dropbox</p>
+            </LoginContainer>
+          </a>
+        </Link>
+      </LoginForm>
     </>
   )
 }
 
 export default Login
 
-export const getServerSideProps: GetServerSideProps<{
-  token: string | null
-  error: Error | null
-  userProfile: UserProfileFE
-}> = async ({ query }) => {
-  const { code } = query
-  let token = null
-  let error = null
-  let userProfile: UserProfileFE = {
-    accountId: '',
-    name: {
-      givenName: '',
-      surname: '',
-      familiarName: '',
-      displayName: '',
-      abbreviatedName: '',
-    },
-    email: '',
-    country: '',
-    locale: '',
-  }
+export const getStaticProps: GetStaticProps<{
+  loginUrl: string
+}> = async () => {
+  // let userProfile: UserProfileFE = {
+  //   accountId: '',
+  //   name: {
+  //     givenName: '',
+  //     surname: '',
+  //     familiarName: '',
+  //     displayName: '',
+  //     abbreviatedName: '',
+  //   },
+  //   email: '',
+  //   country: '',
+  //   locale: '',
+  // }
+  const loginUrl = `https://www.dropbox.com/oauth2/authorize?client_id=${process.env.CLIENT_ID}&response_type=code&redirect_uri=${process.env.REDIRECT_URI}`
 
-  // User code to get token and user profile
+  // if (!code) {
+  //   return {
+  //     props: { userProfile, loginUrl },
+  //   }
+  // }
+
+  // console.log('code', code)
+
+  // const result = await loginWithCode(res, String(code))
+
+  // console.log(result)
 
   return {
-    props: { token: token || null, error, userProfile },
+    props: { loginUrl },
   }
 }
