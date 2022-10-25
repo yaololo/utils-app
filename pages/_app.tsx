@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react'
 import { ThemeProvider } from 'styled-components'
+import { RecoilRoot } from 'recoil'
+
 import theme from '@/lib/utils/theme'
 import GlobalStyle from '@/components/global-style'
 // import { useRouter } from 'next/router'
@@ -25,12 +27,12 @@ const MyApp = (props: MyAppProps) => {
   useEffect(() => {}, [])
 
   return (
-    <>
+    <RecoilRoot>
       <ThemeProvider theme={theme}>
         <GlobalStyle />
         <Component {...pageProps} />
       </ThemeProvider>
-    </>
+    </RecoilRoot>
   )
 }
 
