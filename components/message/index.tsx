@@ -1,36 +1,39 @@
 import NotificationComponent from './notification'
 
-let notificationInstance: NotificationComponent | null = null
+class Message {
+  private notificationInstance: NotificationComponent | null = null
 
-const getNotificationInstance = (
-  callback: (n: NotificationComponent) => void
-) => {
-  if (notificationInstance) {
-    callback(notificationInstance)
-    return
-  }
-
-  NotificationComponent.newInstance({}, (instance) => {
-    if (notificationInstance) {
-      callback(notificationInstance)
+  private getNotificationInstance = (
+    callback: (n: NotificationComponent) => void
+  ) => {
+    if (this.notificationInstance) {
+      callback(this.notificationInstance)
       return
     }
 
-    notificationInstance = instance
+    NotificationComponent.newInstance({}, (instance) => {
+      if (this.notificationInstance) {
+        callback(this.notificationInstance)
+        return
+      }
 
-    callback(notificationInstance)
-  })
-}
+      this.notificationInstance = instance
 
-const message = {
-  success: (message: string) =>
-    getNotificationInstance((instance: NotificationComponent) => {
+      callback(this.notificationInstance)
+    })
+  }
+
+  public success = (message: string) =>
+    this.getNotificationInstance((instance: NotificationComponent) => {
       instance.add({ variant: 'success', message })
-    }),
-  error: (message: string) =>
-    getNotificationInstance((instance: NotificationComponent) => {
+    })
+
+  public error = (message: string) =>
+    this.getNotificationInstance((instance: NotificationComponent) => {
       instance.add({ variant: 'error', message })
-    }),
+    })
 }
+
+const message = new Message()
 
 export default message
