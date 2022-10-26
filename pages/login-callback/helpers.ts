@@ -1,5 +1,4 @@
 import type { GetServerSidePropsContext } from 'next'
-import jwt from 'jsonwebtoken'
 import { serialize, CookieSerializeOptions } from 'cookie'
 
 import { apiCaller } from '@/lib/api-caller'
@@ -7,8 +6,12 @@ import { TokenInfoBE, UserProfileBE, UserProfileFE } from '@/interfaces/user'
 import { setSuccess } from '@/lib/utils/remote-data'
 import { Fail, Success } from '@/interfaces/utils'
 import { ServerResponse } from 'http'
+import { sign } from '@/lib/jwt'
 
-const setCookie = (res: GetServerSidePropsContext['res'], token: string) => {
+const setCookie = (
+  res: GetServerSidePropsContext['res'],
+  value: Record<string, { value: string; options?: CookieSerializeOptions }>
+) => {
   const expireDate = new Date()
   // Keep it alive for 14 days
   expireDate.setDate(expireDate.getDate() + 14)
@@ -19,7 +22,15 @@ const setCookie = (res: GetServerSidePropsContext['res'], token: string) => {
     secure: true,
     expires: expireDate,
   }
-  res.setHeader('Set-Cookie', serialize('token', token, options))
+
+  const cookieValues = Object.entries(value).map(([key, data]) => {
+    const mergedOptions = data.options
+      ? { ...options, ...data.options }
+      : options
+    return serialize(key, data.value, mergedOptions)
+  })
+
+  res.setHeader('Set-Cookie', cookieValues)
 }
 
 export const loginWithCode: (
@@ -62,10 +73,8 @@ export const loginWithCode: (
     return userProfile
   }
 
-  const token = jwt.sign(mappedTokenInfo, String(process.env.JWT_SECRET))
-
-  setCookie(res, token)
-  return setSuccess({
+  const accessToken = await sign(mappedTokenInfo, String(process.env.JWT_SECRET))
+  const mappedUserProfile = {
     accountId: userProfile.data.account_id,
     name: {
       givenName: userProfile.data.name.given_name,
@@ -77,5 +86,16 @@ export const loginWithCode: (
     email: userProfile.data.email,
     country: userProfile.data.country,
     locale: userProfile.data.locale,
+  }
+
+  const userProfileToken =  await sign(
+    mappedUserProfile,
+    String(process.env.JWT_SECRET)
+  )
+
+  setCookie(res, {
+    token: { value: accessToken },
+    userProfile: { value: userProfileToken, options: { httpOnly: false } },
   })
+  return setSuccess(mappedUserProfile)
 }

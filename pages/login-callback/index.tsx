@@ -1,21 +1,29 @@
 import { NextPage } from 'next'
+import { useRecoilState } from 'recoil'
 
 import { UserProfileFE } from '@/interfaces/user'
 import { loginWithCode } from './helpers'
 import { useRouter } from 'next/router'
 import message from '@/components/message'
 import useRenderOnce from '@/hooks/use-render-once'
+import { userProfileAtom } from '@/store/auth'
+import { BaseData } from '@/interfaces/utils'
 
 type Props = {
-  userProfile?: UserProfileFE
+  userProfile?: BaseData<UserProfileFE>
   isLoginFail?: boolean
   userAgent?: string
 }
 
-const LoginCallback: NextPage<Props> = ({ isLoginFail }) => {
+const LoginCallback: NextPage<Props> = ({ isLoginFail, userProfile }) => {
   const router = useRouter()
+  const [, setUserProfile] = useRecoilState(userProfileAtom)
 
   useRenderOnce(() => {
+    if (userProfile) {
+      setUserProfile(userProfile)
+    }
+
     if (isLoginFail) {
       message.error('login fail')
       router.push('/login')
@@ -41,12 +49,10 @@ LoginCallback.getInitialProps = async ({ query, res }) => {
   const result = await loginWithCode(res, String(code))
 
   if (result.status === 'FAIL') {
-    return { isLoginFail: true }
+    return { isLoginFail: true, userProfile: result }
   }
 
-  const userProfile = result.data
-
   return {
-    userProfile,
+    userProfile: result,
   }
 }
