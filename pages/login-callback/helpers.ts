@@ -1,5 +1,4 @@
 import type { GetServerSidePropsContext } from 'next'
-import jwt from 'jsonwebtoken'
 import { serialize, CookieSerializeOptions } from 'cookie'
 
 import { apiCaller } from '@/lib/api-caller'
@@ -7,6 +6,7 @@ import { TokenInfoBE, UserProfileBE, UserProfileFE } from '@/interfaces/user'
 import { setSuccess } from '@/lib/utils/remote-data'
 import { Fail, Success } from '@/interfaces/utils'
 import { ServerResponse } from 'http'
+import { sign } from '@/lib/jwt'
 
 const setCookie = (
   res: GetServerSidePropsContext['res'],
@@ -73,7 +73,7 @@ export const loginWithCode: (
     return userProfile
   }
 
-  const accessToken = jwt.sign(mappedTokenInfo, String(process.env.JWT_SECRET))
+  const accessToken = await sign(mappedTokenInfo, String(process.env.JWT_SECRET))
   const mappedUserProfile = {
     accountId: userProfile.data.account_id,
     name: {
@@ -88,7 +88,7 @@ export const loginWithCode: (
     locale: userProfile.data.locale,
   }
 
-  const userProfileToken = jwt.sign(
+  const userProfileToken =  await sign(
     mappedUserProfile,
     String(process.env.JWT_SECRET)
   )
