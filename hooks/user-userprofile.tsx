@@ -16,7 +16,6 @@ const useUserProfile = () => {
       try {
         const userProfileJWT = cookies.parse(document.cookie).userProfile
 
-        console.log(userProfileJWT)
         if (!userProfileJWT) {
           setUserProfile(setFetchFail(new Error('Fail retrieve user data')))
         } else {
