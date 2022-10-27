@@ -45,6 +45,7 @@ export type TokenInfoBE = {
   uid: string
   account_id: string
   expires_in: number
+  refresh_token: string
 }
 
 export type TokenInfoFE = {
@@ -54,4 +55,10 @@ export type TokenInfoFE = {
   uid: string
   accountId: string
   expiresIn: number
+  refreshToken: string
+}
+
+export type RefreshedToken = {
+  access_token: string
+  expires_in: number
 }
