@@ -28,12 +28,19 @@ const StyledButton = styled.button`
 
 type Props = {
   type?: 'primary'
-}
+} & React.ButtonHTMLAttributes<HTMLButtonElement>
 
-const Button: React.FC<ReactWithChildRen & Props> = ({ children, type }) => {
+const Button: React.FC<ReactWithChildRen & Props> = ({
+  children,
+  type,
+  ...props
+}) => {
   const className = type === 'primary' ? 'btn-primary' : ''
-
-  return <StyledButton className={className}>{children}</StyledButton>
+  return (
+    <StyledButton className={className} {...props}>
+      {children}
+    </StyledButton>
+  )
 }
 
 export default Button

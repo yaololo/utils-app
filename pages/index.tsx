@@ -1,13 +1,9 @@
 import React from 'react'
-import Home from 'pages/home'
-import Header from '@/fragments/header'
+import Header from '@/fragments/header-layout'
+import { ReactWithChildRen } from '@/interfaces/utils'
 
-const Index: React.FunctionComponent = () => {
-  return (
-    <>
-      <Header />
-      <Home />
-    </>
-  )
+const Index: React.FC<ReactWithChildRen> = ({ children }) => {
+  return <Header>{children}</Header>
 }
+
 export default Index

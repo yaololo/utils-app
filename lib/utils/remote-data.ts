@@ -1,4 +1,4 @@
-import { Success, Fail, Loading, UnSet } from "@/interfaces/remote-data";
+import { Success, Fail, Loading, UnSet } from "@/interfaces/utils";
 
 export const setFetchFail = (error: Error) =>
   ({

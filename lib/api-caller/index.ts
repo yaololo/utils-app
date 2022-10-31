@@ -1,62 +1,128 @@
-import { setSuccess, setFetchFail } from "@/lib/utils/remote-data";
+import { setSuccess, setFetchFail } from '../utils/remote-data'
+import { SafeTypedAny } from '@/interfaces/utils'
 
-type Method = "GET" | "POST";
-
-type ParamType<P> = { method: Method; url: string; payload?: P };
+type Method = 'GET' | 'POST' | 'DELETE' | 'PUT'
+type ParamType<P> = {
+  method: Method
+  url: string
+  payload?: P
+  newHeader?: Record<string, string>
+}
 
 class ApiCaller {
-  private normalizeError = (err: unknown | any) => {
+  // Ignored for test coverage as it is private function.
+  /* istanbul ignore next */
+  private normalizeError = (err: SafeTypedAny) => {
     if (err instanceof Error) {
-      return err;
+      return err
     }
 
-    return new Error("Unknown error occurred");
-  };
+    return new Error('Unknown error occurred')
+  }
 
   // Ignored for test coverage as it is private function.
   /* istanbul ignore next */
-  private resolveFetchAction = async <T, P = any>({
+  private resolveFetchAction = async <T, P extends RequestInit['body']>({
     method,
     url,
     payload,
+    newHeader,
   }: ParamType<P>) => {
     try {
-      const defaultOptions = payload ? { body: JSON.stringify(payload) } : {};
-
       const response = await fetch(url, {
         method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        ...defaultOptions,
-      });
+        body: payload,
+        headers: newHeader,
+      })
 
-      const { status } = response;
+      const { status } = response
 
-      // 499 is our own BE error response
       if (status < 200 || status >= 300) {
         // Define error message
-        return setFetchFail(new Error("Operation fail"));
+        try {
+          const info = await response.text()
+          return setFetchFail(new Error(info))
+        } catch (error) {
+          return setFetchFail(this.normalizeError(error))
+        }
       }
 
       try {
-        const result = await response.json();
-        return setSuccess<T>(result);
+        const result = await response.json()
+        return setSuccess<T>(result)
       } catch (error) {
-        return setFetchFail(this.normalizeError(error));
+        return setFetchFail(this.normalizeError(error))
       }
     } catch (error) {
-      return setFetchFail(this.normalizeError(error));
+      return setFetchFail(this.normalizeError(error))
     }
-  };
+  }
 
-  GET = async <T>(url: string) => {
-    return this.resolveFetchAction<T>({ method: "GET", url });
-  };
+  // Ignored for test coverage as it is private function.
+  /* istanbul ignore next */
 
-  POST = async <T, P>(url: string, payload: P) => {
-    return this.resolveFetchAction<T, P>({ method: "POST", url, payload });
-  };
+  private toJsonString = (payload: Record<string, unknown>) =>
+    JSON.stringify(payload)
+
+  public GET = async <T>(url: string) => {
+    return this.resolveFetchAction<T, null>({ method: 'GET', url })
+  }
+
+  public POST = async <T, P extends SafeTypedAny>(
+    url: string,
+    payload: P,
+    headers?: Record<string, string>
+  ) => {
+    const requestPayload = !!payload ? this.toJsonString(payload) : null
+
+    return this.resolveFetchAction<T, string | null>({
+      method: 'POST',
+      url,
+      payload: requestPayload,
+      newHeader: headers,
+    })
+  }
+
+  public PUT = async <T, P extends SafeTypedAny>(url: string, payload: P) => {
+    const requestPayload = !!payload ? this.toJsonString(payload) : null
+
+    return this.resolveFetchAction<T, string | null>({
+      method: 'PUT',
+      url,
+      payload: requestPayload,
+    })
+  }
+
+  public DELETE = async <T>(url: string) => {
+    return this.resolveFetchAction<T, null>({
+      method: 'DELETE',
+      url,
+    })
+  }
+
+  public UPLOAD = async <T, P>(
+    url: string,
+    payload: P,
+    file?: File,
+    method?: 'POST' | 'PUT'
+  ) => {
+    const data = new FormData()
+    if (file) {
+      data.append('uploadedFile', file)
+    }
+
+    if (payload && typeof payload === 'object') {
+      for (const [key, value] of Object.entries(payload)) {
+        data.append(key, value)
+      }
+    }
+
+    return this.resolveFetchAction<T, FormData>({
+      method: method || 'POST',
+      url,
+      payload: data,
+    })
+  }
 }
 
-export const apiCaller = new ApiCaller();
+export const apiCaller = new ApiCaller()
